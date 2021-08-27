@@ -53,7 +53,7 @@ def read_and_translate(current_message, translated):
             #print("text: ", text)
             #print("len: ", len(text))
             # translate the text
-            translated = GoogleTranslator(source='ru', target='en').translate(text)
+            translated = GoogleTranslator(source='auto', target='en').translate(text)
         # print("translated:", translated)
         if translated != current_message:
             current_message = translated
