@@ -69,7 +69,7 @@ print('\033[95m' + "The script will start in 3 secons. Be sure to swap in game."
 # time.sleep(3.0)
 
 current_message = ""
-translated = "Welcome to the translater"
+translated = ""
 
 while(1):
 
