@@ -27,51 +27,6 @@ file.write("")
 file.close() 
 
 def read_and_translate(current_message, translated):
-    # Looping through the identified contours
-    # Then rectangular part is cropped and passed on
-    # to pytesseract for extracting text from it
-    # Extracted text is then written into the text file
-    for cnt in contours:
-        x, y, w, h = cv.boundingRect(cnt)
-        
-        # Drawing a rectangle on copied image
-        rect = cv.rectangle(chat_img, (x, y), (x + w, y + h), (0, 255, 0), 2)
-        
-        # Cropping the text block for giving input to OCR
-        cropped = chat_img[y:y + h, x:x + w]
-        
-        # Open the file in append mode
-        file = open("recognized.txt", "a")
-        
-        # Apply OCR on the cropped image
-        text = pytesseract.image_to_string(cropped)
-        # text.replace("\n", "")
-        text = text.rstrip()
-
-        
-        if len(text) > 2 and len(text) < 200:
-            #print("text: ", text)
-            #print("len: ", len(text))
-            # translate the text
-            translated = GoogleTranslator(source='auto', target='en').translate(text)
-        # print("translated:", translated)
-        if translated != current_message:
-            current_message = translated
-            print("\033[92m", current_message)
-            # Appending the text into file
-            file.write(current_message)
-            file.write("\n")
-            file.close
-        time.sleep(1.0)
-        return current_message
-
-print('\033[95m' + "The script will start in 3 secons. Be sure to swap in game.")
-# time.sleep(3.0)
-
-current_message = ""
-translated = ""
-
-while(1):
 
     screen = image = pyautogui.screenshot()
     img = cv.cvtColor(np.array(image), cv.COLOR_RGB2BGR)
@@ -98,10 +53,66 @@ while(1):
     # Finding contours
     contours, hierarchy = cv.findContours(dilation, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_NONE)
 
+    # Looping through the identified contours
+    # Then rectangular part is cropped and passed on
+    # to pytesseract for extracting text from it
+    # Extracted text is then written into the text file
+    for cnt in contours:
+        x, y, w, h = cv.boundingRect(cnt)
+        
+        # Drawing a rectangle on copied image
+        rect = cv.rectangle(chat_img, (x, y), (x + w, y + h), (0, 255, 0), 2)
+        
+        # Cropping the text block for giving input to OCR
+        cropped = chat_img[y:y + h, x:x + w]
+        cv.imshow('chat_img', chat_img)
+        # Open the file in append mode
+        file = open("recognized.txt", "a")
+
+        # Custom config for multiple languages
+        # custom_config = r'-l eng+tur+rus+chi_sim --psm 6' 
+        
+        # Apply OCR on the cropped image
+        text = pytesseract.image_to_string(cropped, lang='eng+tur+rus+chi_sim') # config = custom_config
+
+        # text.replace("\n", "")
+        text = text.rstrip()
+        #print("text: ", text)
+        index = text.find(':')
+        player_name = text[:index+1]
+        player_message = text[index+1:]
+        if len(player_message) > 2 and len(player_message) < 200:
+            
+            #print("len: ", len(player_message))
+            # translate the player_message
+            translated = GoogleTranslator(source='auto', target='en').translate(player_message)
+        #print("player_message:", player_message)
+        if translated != current_message:
+            current_message = translated
+            print("name:", player_name, "message:", current_message)
+            # Appending the text into file
+            if current_message:
+                try:
+                    file.write(current_message)
+                    file.write("\n")
+                    file.close
+                except:
+                    print("")
+        time.sleep(1.0)
+        return current_message
+
+print('\033[95m' + "The script will start in 3 secons. Be sure to swap in game.")
+# time.sleep(3.0)
+
+current_message = ""
+translated = ""
+
+while(1):
+
     current_message = read_and_translate(current_message, translated)
     # cv.imshow('image',img)
 
-    cv.imshow('chat_img', chat_img)
+    
     k = cv.waitKey(20) & 0xFF
     if k == 27:
         break
