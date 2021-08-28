@@ -5,6 +5,7 @@ The target area is configured to the Rust in game chat but can be placed everywh
 ## Installation
 - Install tesseract from this site: https://github.com/UB-Mannheim/tesseract/wiki  
 and set the path in translater.py line 10 to your tesseract.exe installation  
+Be sure to install all the languages you want: https://ocrmypdf.readthedocs.io/en/latest/languages.html
 
 - pip install numpy  
 - pip install opencv-python
@@ -13,6 +14,4 @@ and set the path in translater.py line 10 to your tesseract.exe installation
 - pip install -U deep-translator
 
 ## Problems
-- text recognition needs high contrast to work  
-- player names may cause problems to detect the language automatically  
-- unknown characters can lead to a crash 
+- text recognition needs high contrast to work
