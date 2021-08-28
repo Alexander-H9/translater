@@ -74,22 +74,22 @@ def read_and_translate(current_message, translated):
         
         # Apply OCR on the cropped image
         text = pytesseract.image_to_string(cropped, lang='eng+tur+rus+chi_sim') # config = custom_config
-
-        # text.replace("\n", "")
         text = text.rstrip()
         #print("text: ", text)
+
+        # split player name and palyer message
         index = text.find(':')
         player_name = text[:index+1]
         player_message = text[index+1:]
+
         if len(player_message) > 2 and len(player_message) < 200:
-            
-            #print("len: ", len(player_message))
             # translate the player_message
             translated = GoogleTranslator(source='auto', target='en').translate(player_message)
-        #print("player_message:", player_message)
+
         if translated != current_message:
             current_message = translated
             print("name:", player_name, "message:", current_message)
+
             # Appending the text into file
             if current_message:
                 try:
@@ -98,11 +98,12 @@ def read_and_translate(current_message, translated):
                     file.close
                 except:
                     print("")
+                    
         time.sleep(1.0)
         return current_message
 
-print('\033[95m' + "The script will start in 3 secons. Be sure to swap in game.")
-# time.sleep(3.0)
+print("The script will start in 3 secons. Be sure to swap in game.")
+time.sleep(3.0)
 
 current_message = ""
 translated = ""
@@ -110,15 +111,12 @@ translated = ""
 while(1):
 
     current_message = read_and_translate(current_message, translated)
-    # cv.imshow('image',img)
 
-    
     k = cv.waitKey(20) & 0xFF
     if k == 27:
         break
     elif k == ord('q'):
         break
 
-# Close the file
 file.close
 cv.destroyAllWindows()
